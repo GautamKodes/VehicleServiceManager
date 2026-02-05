@@ -10,10 +10,22 @@ public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     long customerId;
-    String firstName;
-    String lastName;
-    String vehicleId;
-    String vehicleName;
-    String vehicleNumber;
-    int mobileNum;
+    int customerMobileNum;
+    String customerName;
+
+    public Customer(){};
+    //setters
+    public void setCustomerName(String name){
+        this.customerName=name;
+    }
+    public void setCustomerMobileNum(int num){
+        this.customerMobileNum=num;
+    }
+    //getters
+    public String getCustomerName(){
+        return customerName;
+    }
+    public int getCustomerMobileNum(){
+        return customerMobileNum;
+    }
 }

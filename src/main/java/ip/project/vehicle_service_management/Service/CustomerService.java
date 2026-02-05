@@ -15,14 +15,23 @@ public class CustomerService {
         this.customerrepo = customerrepo;
     }
 
+    public Customer customerId(Long customerId){
+        return customerrepo.getById(customerId);
+    }
     public List<Customer> getAllCustomers(){
         return customerrepo.findAll();
     }
     public Customer getCustomerById(Long id){
         return customerrepo.getById(id);
     }
-    public void addCustomer(Customer customer){
-        customerrepo.save(customer);
+    public Customer addCustomer(Customer customer){
+        return customerrepo.save(customer);
+    }
+    public Customer updateCustomer(Customer customer){
+        return customerrepo.save(customer);
+    }
+    public void deleteCustomer(Customer customer){
+        customerrepo.delete(customer);
     }
 
 }

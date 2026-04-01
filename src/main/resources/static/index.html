@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Service Management</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Vehicle Service Management</h1>
+            <nav>
+                <button class="nav-btn active" data-tab="service-form">Service Entry Form</button>
+                <button class="nav-btn" data-tab="jobs-list">Jobs List</button>
+                <button class="nav-btn" data-tab="customers-list">Customers</button>
+            </nav>
+        </header>
+
+        <!-- Service Entry Form -->
+        <section id="service-form" class="tab-content active">
+            <div class="form-container">
+                <h2>New Service Entry</h2>
+                <form id="serviceEntryForm">
+                    <div class="form-section">
+                        <h3>Customer Details</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="customerName">Customer Name *</label>
+                                <input type="text" id="customerName" name="customerName" required placeholder="Enter customer name">
+                            </div>
+                            <div class="form-group">
+                                <label for="customerMobileNum">Mobile Number *</label>
+                                <input type="tel" id="customerMobileNum" name="customerMobileNum" required placeholder="10-digit mobile number" pattern="[0-9]{10,15}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Vehicle & Service Details</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="vehicleName">Vehicle Name *</label>
+                                <input type="text" id="vehicleName" name="vehicleName" required placeholder="e.g., Maruti Swift">
+                            </div>
+                            <div class="form-group">
+                                <label for="vehicleNumber">Vehicle Number *</label>
+                                <input type="text" id="vehicleNumber" name="vehicleNumber" required placeholder="e.g., MH12AB1234" style="text-transform: uppercase;">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="scheduledOn">Service Date *</label>
+                                <input type="date" id="scheduledOn" name="scheduledOn" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="status">Service Status *</label>
+                                <select id="status" name="status" required>
+                                    <option value="">Select Status</option>
+                                    <option value="PENDING">Pending</option>
+                                    <option value="IN_PROGRESS">In Progress</option>
+                                    <option value="COMPLETED">Completed</option>
+                                    <option value="DELIVERED">Delivered</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="billAmount">Bill Amount (₹)</label>
+                                <input type="number" id="billAmount" name="billAmount" placeholder="0.00" step="0.01" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="billStatus">Bill Status</label>
+                                <select id="billStatus" name="billStatus">
+                                    <option value="">Select Status</option>
+                                    <option value="PENDING">Pending</option>
+                                    <option value="PAID">Paid</option>
+                                    <option value="UNPAID">Unpaid</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Submit Service Entry</button>
+                        <button type="reset" class="btn btn-secondary">Reset Form</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Jobs List -->
+        <section id="jobs-list" class="tab-content">
+            <div class="list-container">
+                <h2>📋 All Service Jobs</h2>
+                <div class="table-controls">
+                    <input type="text" id="jobSearch" class="search-input" placeholder="Search by vehicle number or customer name...">
+                    <button class="btn btn-primary" onclick="loadJobs()">Refresh</button>
+                </div>
+                <div class="table-responsive">
+                    <table id="jobsTable">
+                        <thead>
+                            <tr>
+                                <th>Job ID</th>
+                                <th>Customer</th>
+                                <th>Mobile</th>
+                                <th>Vehicle</th>
+                                <th>Vehicle No.</th>
+                                <th>Scheduled On</th>
+                                <th>Status</th>
+                                <th>Bill Amount</th>
+                                <th>Bill Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobsTableBody">
+                            <tr><td colspan="10" class="no-data">Loading jobs...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customers List -->
+        <section id="customers-list" class="tab-content">
+            <div class="list-container">
+                <h2>All Customers</h2>
+                <div class="table-controls">
+                    <input type="text" id="customerSearch" class="search-input" placeholder="Search by name or mobile...">
+                    <button class="btn btn-primary" onclick="loadCustomers()">🔄 Refresh</button>
+                </div>
+                <div class="table-responsive">
+                    <table id="customersTable">
+                        <thead>
+                            <tr>
+                                <th>Customer ID</th>
+                                <th>Name</th>
+                                <th>Mobile Number</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customersTableBody">
+                            <tr><td colspan="4" class="no-data">Loading customers...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Edit Job Modal -->
+    <div id="editJobModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Job</h2>
+                <span class="close-btn" onclick="closeEditJobModal()">&times;</span>
+            </div>
+            <form id="editJobForm">
+                <input type="hidden" id="editJobId">
+                <div class="form-group">
+                    <label for="editStatus">Status *</label>
+                    <select id="editStatus" required>
+                        <option value="PENDING">Pending</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="DELIVERED">Delivered</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editBillAmount">Bill Amount (₹)</label>
+                    <input type="number" id="editBillAmount" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="editBillStatus">Bill Status</label>
+                    <select id="editBillStatus">
+                        <option value="">Select Status</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="PAID">Paid</option>
+                        <option value="UNPAID">Unpaid</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Update Job</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeEditJobModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

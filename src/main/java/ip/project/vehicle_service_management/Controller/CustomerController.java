@@ -4,7 +4,6 @@ import ip.project.vehicle_service_management.Model.Customer;
 import ip.project.vehicle_service_management.Model.Job;
 import ip.project.vehicle_service_management.Service.CustomerService;
 import ip.project.vehicle_service_management.Service.JobService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,55 +11,63 @@ import java.util.List;
 @RestController
 @RequestMapping("/dashboard")
 public class CustomerController {
-    @Autowired
-    private CustomerService customerService;
-    public CustomerController(CustomerService customerService){
-        this.customerService=customerService;
+    private final CustomerService customerService;
+    private final JobService jobService;
+
+    public CustomerController(CustomerService customerService, JobService jobService) {
+        this.customerService = customerService;
+        this.jobService = jobService;
     }
 
-    //CREATE
-    @PostMapping
-    public Customer addCustomer(@RequestBody Customer customer){
+    // Customer endpoints
+    @PostMapping("/customer")
+    public Customer addCustomer(@RequestBody Customer customer) {
         return customerService.addCustomer(customer);
     }
 
-    @PutMapping
-    public Customer updateCustomer(@RequestBody Customer customer){
+    @PutMapping("/customer")
+    public Customer updateCustomer(@RequestBody Customer customer) {
         return customerService.updateCustomer(customer);
     }
 
-    @DeleteMapping
-    public void deleteCustomer(@RequestBody Customer customer){
-        customerService.deleteCustomer(customer);
+    @DeleteMapping("/customer")
+    public void deleteCustomer(@RequestBody Customer customer) {
+        customerService.deleteCustomer(customer.getCustomerId());
     }
 
-    @GetMapping("/{id}")
-    public Customer getCustomerById(@PathVariable Long id){
+    @GetMapping("/customer/{id}")
+    public Customer getCustomerById(@PathVariable Long id) {
         return customerService.getCustomerById(id);
     }
 
-    @Autowired
-    private JobService jobservice;
-    public CustomerController(JobService jobservice){
-        this.jobservice=jobservice;
-    }
-    @GetMapping
-    public List<Job> getAllJobs(){
-        return jobservice.getAllJobs();
-    }
-    @PostMapping
-    public Job addJob(@RequestBody Job job){
-        return jobservice.addJob(job);
+    @GetMapping("/customers")
+    public List<Customer> getAllCustomers() {
+        return customerService.getAllCustomers();
     }
 
-    @GetMapping("/{id}")
-    public Job getJob(@PathVariable Long id){
-        return jobservice.getJob(id);
+    // Job endpoints
+    @GetMapping("/jobs")
+    public List<Job> getAllJobs() {
+        return jobService.getAllJobs();
     }
-    @DeleteMapping("/{id}")
-    public void deleteJob(@PathVariable Long id){
-        jobservice.deleteJob(id);
+
+    @PostMapping("/job")
+    public Job addJob(@RequestBody Job job) {
+        return jobService.addJob(job);
+    }
+
+    @PutMapping("/job")
+    public Job updateJob(@RequestBody Job job) {
+        return jobService.updateJob(job);
+    }
+
+    @GetMapping("/job/{id}")
+    public Job getJobById(@PathVariable Long id) {
+        return jobService.getJobById(id);
+    }
+
+    @DeleteMapping("/job/{id}")
+    public void deleteJob(@PathVariable Long id) {
+        jobService.deleteJob(id);
     }
 }
-
-

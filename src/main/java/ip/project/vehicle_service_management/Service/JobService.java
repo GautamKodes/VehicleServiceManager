@@ -1,30 +1,36 @@
 package ip.project.vehicle_service_management.Service;
 
-import ip.project.vehicle_service_management.Model.Customer;
 import ip.project.vehicle_service_management.Model.Job;
 import ip.project.vehicle_service_management.Repository.JobRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class JobService {
-    final private JobRepo jobrepo;
-    @Autowired
-    private JobService(JobRepo jobrepo){
-        this.jobrepo = jobrepo;
+    private final JobRepo jobRepo;
+
+    public JobService(JobRepo jobRepo) {
+        this.jobRepo = jobRepo;
     }
-    public List<Job> getAllJobs(){
-        return jobrepo.findAll();
+
+    public List<Job> getAllJobs() {
+        return jobRepo.findAll();
     }
-    public Job getJob(Long id){
-        return jobrepo.getById(id);
+
+    public Job getJobById(Long id) {
+        return jobRepo.findById(id).orElse(null);
     }
-    public Job addJob(Job job){
-        return jobrepo.save(job);
+
+    public Job addJob(Job job) {
+        return jobRepo.save(job);
     }
-    public void deleteJob(Long id){
-        jobrepo.deleteById(id);
+
+    public Job updateJob(Job job) {
+        return jobRepo.save(job);
+    }
+
+    public void deleteJob(Long id) {
+        jobRepo.deleteById(id);
     }
 }
